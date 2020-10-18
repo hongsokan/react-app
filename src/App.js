@@ -1,8 +1,8 @@
 import React from 'react';
-// import logo from './logo.svg';
+import logo from './logo.svg';
 import './App.css';
 
-class Subject extends Component {
+class Subject extends React.Component {
   render() {
     return (
       // 하나의 최상위 태그만 써야한다
@@ -15,7 +15,7 @@ class Subject extends Component {
   }
 }
 
-class TOC extends Component {
+class TOC extends React.Component {
   render() {
     return (
       <nav>
@@ -29,7 +29,7 @@ class TOC extends Component {
   }
 }
 
-class Content extends Component {
+class Content extends React.Component {
   render() {
     return (
       <article>
@@ -48,6 +48,7 @@ class App extends React.Component {
         <TOC></TOC>
         <Content></Content>
       </div>
+
       // <div className="App">
       //   <header className="App-header">
       //     <img src={logo} className="App-logo" alt="logo" />
