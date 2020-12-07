@@ -9,8 +9,10 @@ class App extends Component {
   constructor(props) {
     super(props);
 
+    // state 값이 바뀌면, 이 state를 가지고 있는 모든 컴퍼넌트의 render 함수 다시 호출
     this.state = {
-      mode: 'welcome',
+      mode: 'read',
+      selected_content_id: 2, // contents에서 선택된 내용 화면에 표시
       subject: { title: 'WEB', sub: 'World Wide Web!' },
       welcome: { title: 'Welcome', desc: 'Hello, React!' },
       contents: [
@@ -21,35 +23,62 @@ class App extends Component {
     }
   }
 
+  // 어떤 html을 그릴 것인지 결정 -> 화면이 다시 그려짐
   render() {
     console.log('App render');
-
     var _title, _desc = null;
     if (this.state.mode === 'welcome') {
       _title = this.state.welcome.title;
       _desc = this.state.welcome.desc;
     } else if (this.state.mode === 'read') {
-      _title = this.state.contents[0].title;
-      _desc = this.state.contents[0].desc;
+      var i = 0;
+      while(i < this.state.contents.length) {
+        var data = this.state.contents[i];
+        if(data.id === this.state.selected_content_id) {
+          _title = data.title;
+          _desc = data.desc;
+          break;
+        }
+        i = i + 1;
+      }
     }
 
     return (
       <div className="App">
 
+        {/* Subject.js에서 props->state */}
+        <Subject
+          title={this.state.subject.title}
+          sub={this.state.subject.sub}
+          onChangePage={function(){
+            this.setState({mode:'welcome'});
+          }.bind(this)}
+        >
+        </Subject>
+
         {/* 컴포넌트 <Subject></Subject> */}
         {/* 컴포넌트 + props <Subject title="WEB" sub="world wide web!"></Subject> */}
         {/* 컴포넌트 + state */}
-        <Subject
+        {/* <Subject
           title={this.state.subject.title}
           sub={this.state.subject.sub}>
-        </Subject>
-
-        <Subject title="React" sub="For UI"></Subject>
+        </Subject> */}
+        {/* <Subject title="React" sub="For UI"></Subject> */}
 
         {/* <TOC></TOC> */}
-        <TOC data={this.state.contents}></TOC>
+        <TOC 
+          onChangePage={function(id){
+            // debugger;
+            // alert('hi');
+            this.setState({
+              mode:'read',
+              selected_content_id: Number(id)
+            });
+          }.bind(this)} 
+          data={this.state.contents}
+        ></TOC>
 
-        <Content title="HTML" desc="HTML is HyperText Markup Language."></Content>
+        <Content title={_title} desc={_desc}></Content>
 
       </div>
 
