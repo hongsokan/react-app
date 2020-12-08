@@ -14,7 +14,7 @@ class App extends Component {
     this.max_content_id = 3;
     // state 값이 바뀌면, 이 state를 가지고 있는 모든 컴퍼넌트의 render 함수 다시 호출
     this.state = {
-      mode: 'create',
+      mode: 'welcome',
       selected_content_id: 2, // contents에서 선택된 내용 화면에 표시
       subject: { title: 'WEB', sub: 'World Wide Web!' },
       welcome: { title: 'Welcome', desc: 'Hello, React!' },
@@ -53,25 +53,31 @@ class App extends Component {
         // console.log(_title, _desc);
         this.max_content_id = this.max_content_id + 1;
 
+        // 배열을 새로 복제하여, 복제된 배열에 데이터 추가
+        var _contents = Array.from(this.state.contents);
+        _contents.push({ id: this.max_content_id, title: _title, desc: _desc });
+
         // concat으로 원본은 보존하고, 복제된 배열 사용
-        var _contents = this.state.contents.concat(
-          { id: this.max_content_id, title: _title, desc: _desc }
-        )
+        // var _contents = this.state.contents.concat(
+        //   { id: this.max_content_id, title: _title, desc: _desc }
+        // )
+
         // push는 원본 수정하여 사용
         // this.state.contents.push(
         //   {id:this.max_content_id, title:_title, desc:_desc}
         // );
 
         this.setState({
-          contents: _contents
+          contents: _contents,
           // contents:this.state.contents
+          mode:'read',
+          selected_content_id: this.max_content_id
         });
       }.bind(this)}></CreateContent>;
     } else if (this.state.mode === 'update') {
       _content = this.getReadContent();
       _article = <UpdateContent data={_content} onSubmit={
         function (_id, _title, _desc) {
-
           var _contents = Array.from(this.state.contents);
           var i = 0;
           while(i < _contents.length) {
@@ -86,7 +92,8 @@ class App extends Component {
           // )
 
           this.setState({
-            contents: _contents
+            contents: _contents,
+            mode:'read'
           });
         }.bind(this)}></UpdateContent>;
     }
@@ -134,9 +141,28 @@ class App extends Component {
         ></TOC>
 
         <Control onChangeMode={function (_mode) {
-          this.setState({
-            mode: _mode
-          });
+          if (_mode === 'delete') {
+            if(window.confirm('really?')) {
+              var _contents = Array.from(this.state.contents);
+              var i = 0;
+              while(i < this.state.contents.length) {
+                if(_contents[i].id === this.state.selected_content_id) {
+                  _contents.splice(i, 1);
+                  break;
+                }
+                i = i + 1;
+              }
+              this.setState({
+                mode:'welcome',
+                contents:_contents
+              });
+              alert('deleted!');
+            }
+          } else {
+            this.setState({
+              mode: _mode
+            });
+          }
         }.bind(this)}></Control>
 
         {this.getContent()}
