@@ -2,6 +2,19 @@ import React, { Component } from 'react';
 
 // Table Of Contents
 class TOC extends Component {
+
+    shouldComponentUpdate(newProps, newState) {
+        console.log('==> TOC render shouldComponentUpdate'
+            , newProps.data
+            , this.props.data
+        );
+
+        if (this.props.data === newProps.data) {
+            return false;
+        }
+        return true;
+    }
+
     render() {
         console.log('TOC render');
 
@@ -12,10 +25,10 @@ class TOC extends Component {
         while (i < data.length) {
             lists.push(
                 <li key={data[i].id}>
-                    <a 
+                    <a
                         href={"/content/" + data[i].id}
                         data-id={data[i].id}
-                        onClick={function(e){
+                        onClick={function (e) {
                             // debugger;
                             e.preventDefault();
                             this.props.onChangePage(e.target.dataset.id);
